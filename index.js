@@ -19,18 +19,38 @@ const PORT = 3000;
 */
 
 const server = http.createServer();
+
+const friends = [
+	{
+		id: 0,
+		name: 'Georges S.',
+	},
+	{
+		id: 1,
+		name: 'Patrick O.',
+	},
+	{
+		id: 2,
+		name: 'Eunice M.',
+	},
+];
+
+// (req, res) => {} => eventListener or requestListener
 server.on('request', (req, res) => {
-	if (req.url === '/friends') {
+	const items = req.url.split('/');
+	// '/friends/2' => ['', 'friends', '2']
+
+	if (items[1] === 'friends') {
 		// res.writeHead(200, { 'Content-Type': 'application/json' });
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
-		res.end(
-			JSON.stringify({
-				id: 1,
-				name: 'Sir SOUOP Georges',
-			})
-		);
-	} else if (req.url === '/messages') {
+
+		if (items.length === 3) {
+			res.end(JSON.stringify(friends[+items[2]]));
+		} else {
+			res.end(JSON.stringify(friends));
+		}
+	} else if (items[1] === 'messages') {
 		res.setHeader('Content-Type', 'text/html');
 		res.write('<html>');
 		res.write('<body>');
@@ -41,9 +61,13 @@ server.on('request', (req, res) => {
 		res.write('</body>');
 		res.write('</html>');
 		res.end();
+	} else {
+		res.statusCode = 404;
+		res.end();
 	}
 });
 
+// localhost = 127.0.0.1
 server.listen(PORT, () => {
 	console.log(`Listining on port ${PORT}...`);
 });
